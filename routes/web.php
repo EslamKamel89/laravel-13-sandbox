@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\SandboxController;
+use App\Jobs\TestJob;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -11,5 +12,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::prefix('sandbox')->group(function () {
     Route::get('/auth', [SandboxController::class, 'index']);
     Route::get('/public', [SandboxController::class, 'public']);
+    Route::get('/test-job', function () {
+        TestJob::dispatch();
+        return response()->json([
+            'message' => 'job dispatched',
+        ]);
+    });
 });
 require __DIR__ . '/settings.php';
