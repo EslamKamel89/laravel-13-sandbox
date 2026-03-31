@@ -8,5 +8,8 @@ Route::view('/', 'welcome')->name('home');
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });
-Route::get('/test', [SandboxController::class, 'index']);
+Route::prefix('sandbox')->group(function () {
+    Route::get('/auth', [SandboxController::class, 'index']);
+    Route::get('/public', [SandboxController::class, 'public']);
+});
 require __DIR__ . '/settings.php';
