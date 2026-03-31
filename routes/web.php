@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\SandboxController;
 use App\Jobs\TestJob;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
@@ -16,6 +17,22 @@ Route::prefix('sandbox')->group(function () {
         TestJob::dispatch();
         return response()->json([
             'message' => 'job dispatched',
+        ]);
+    });
+
+    Route::post('/validation/{id}', function (Request $request, $id) {
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'page' => ['required', 'integer', 'min:1'],
+            'limit' => ['required', 'integer', 'min:1'],
+        ]);
+        $pathParams = validator(
+            ['id' => $id],
+            ['id' => 'required|integer|min:1']
+        )->validate();
+        return response()->json([
+            'body_and_query_data' => $validated,
+            'path_params' => $pathParams,
         ]);
     });
 });
