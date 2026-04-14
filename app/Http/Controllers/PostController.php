@@ -9,7 +9,16 @@ use Illuminate\Routing\Attributes\Controllers\Middleware;
 #[Middleware('auth:sanctum')]
 class PostController extends Controller {
     public function index() {
-        $posts = Post::publish()->get();
+        // $posts = auth()
+        //     ->user()
+        //     ->posts()
+        //     ->publish()
+        //     ->get();
+        $posts = Post::with(['user'])
+            ->whereHas('user', function ($q) {
+                $q->where('name', 'admin');
+            })
+            ->publish()->get();
         return $posts;
     }
 
@@ -17,6 +26,12 @@ class PostController extends Controller {
     }
 
     public function store(Request $request) {
+        $validated =  $request->validate([
+            'title' => 'required',
+            'content' => 'required'
+        ]);
+        $post = auth()->user()->posts()->create($validated);
+        return $post;
     }
 
     public function show(string $id) {
