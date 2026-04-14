@@ -13,4 +13,6 @@ Route::get('/user', function (Request $request) {
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
 });
+Route::post('/posts/{post}/like', [PostController::class, 'toggleLike']);
+Route::post('/posts/{post}/comment', [PostController::class, 'addComment']);
 Route::resource('/posts', PostController::class);
