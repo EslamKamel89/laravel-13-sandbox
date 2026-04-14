@@ -7,7 +7,9 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -44,5 +46,14 @@ class User extends Authenticatable {
     }
     public function posts(): HasMany {
         return $this->hasMany(Post::class);
+    }
+    public function likes(): HasMany {
+        return $this->hasMany(Like::class);
+    }
+    public function likedPosts(): BelongsToMany {
+        return $this->belongsToMany(Post::class, 'likes');
+    }
+    public function comments(): MorphMany {
+        return $this->morphMany(Comment::class, 'commentable');
     }
 }
