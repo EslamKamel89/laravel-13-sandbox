@@ -18,7 +18,8 @@ class PostFactory extends Factory {
         return [
             'title' => $this->faker->words(5, True),
             'content' => $this->faker->paragraph(),
-            'published' => $this->faker->boolean(50)
+            'published' => $this->faker->boolean(50),
+            'metadata' => ['created_by' => 'seeder']
         ];
     }
 }
