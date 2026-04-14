@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostResource;
 use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class PostController extends Controller {
         $posts = Post::with(['user', 'likedByUsers', 'comments'])
             ->publish()
             ->get();
-        return $posts;
+        return PostResource::collection($posts);
     }
 
     public function create() {
