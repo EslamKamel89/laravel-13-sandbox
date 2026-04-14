@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
@@ -14,11 +15,9 @@ class PostController extends Controller {
         //     ->posts()
         //     ->publish()
         //     ->get();
-        $posts = Post::with(['user'])
-            ->whereHas('user', function ($q) {
-                $q->where('name', 'admin');
-            })
-            ->publish()->get();
+        $posts = Post::with(['user', 'likedByUsers', 'comments'])
+            ->publish()
+            ->get();
         return $posts;
     }
 
@@ -44,5 +43,29 @@ class PostController extends Controller {
     }
 
     public function destroy(string $id) {
+    }
+    public function toggleLike(Post $post) {
+        $like = $post->likes()->where('user_id', auth()->id())->first();
+        if ($like == null) {
+            $newLike = $post->likes()->create([
+                'user_id' => auth()->id(),
+            ]);
+            return response()->json(['message' => 'post added to likes']);
+        }
+        $like->delete();
+        return response()->json(['message' => 'Post removed from likes']);
+    }
+    public function addComment(Request $request, Post $post) {
+        $validated = $request->validate([
+            'content' => ['required']
+        ]);
+        $post->comments()->create($validated);
+        // $validated += [
+        //     'commentable_type' => Post::class,
+        //     'commentable_id' => $post->id
+        // ];
+        // Comment::create($validated);
+        $post->load(['user', 'likedByUsers', 'comments']);
+        return $post;
     }
 }
