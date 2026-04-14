@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PostStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,6 +16,8 @@ return new class extends Migration {
             $table->string('title');
             $table->text('content')->nullable();
             $table->boolean('published')->default(true);
+            $table->json('metadata')->default("{}");
+            $table->enum('status', array_column(PostStatus::cases(), 'value'))->default(PostStatus::PUBLISHED);
             $table->softDeletes();
             $table->timestamps();
         });
